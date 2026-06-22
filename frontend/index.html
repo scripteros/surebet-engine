@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎯 Surebet Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 4px rgba(34,197,94,.3); }
+      50% { box-shadow: 0 0 16px rgba(34,197,94,.6); }
+    }
+    .surebet-card { animation: pulse-glow 2s ease-in-out infinite; }
+    .profit-high { color: #22c55e; }
+    .profit-mid { color: #eab308; }
+    .profit-low { color: #f97316; }
+  </style>
+</head>
+<body class="bg-zinc-900 text-zinc-100 min-h-screen">
+  <div id="app" class="max-w-7xl mx-auto p-4">
+    <!-- Header -->
+    <header class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold">🎯 Surebet Engine</h1>
+        <p class="text-zinc-400 text-sm">Arbitragem esportiva em tempo real</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <span id="stats" class="text-sm text-zinc-400"></span>
+        <span id="updateTime" class="text-xs text-zinc-500"></span>
+        <button onclick="forceRefresh()" class="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 rounded text-sm">🔄 Atualizar</button>
+      </div>
+    </header>
+
+    <!-- Filters -->
+    <div class="flex flex-wrap gap-3 mb-6">
+      <div class="flex items-center gap-2 bg-zinc-800 px-3 py-2 rounded-lg">
+        <span class="text-zinc-400 text-sm">🔍</span>
+        <input id="search" placeholder="Time ou liga..." class="bg-transparent text-sm outline-none w-40" oninput="filter()">
+      </div>
+      <div class="flex items-center gap-2 bg-zinc-800 px-3 py-2 rounded-lg">
+        <span class="text-zinc-400 text-sm">📈</span>
+        <select id="minProfit" class="bg-transparent text-sm outline-none" onchange="filter()">
+          <option value="0">Min. 0%</option>
+          <option value="1">Min. 1%</option>
+          <option value="2">Min. 2%</option>
+          <option value="5">Min. 5%</option>
+          <option value="10">Min. 10%</option>
+        </select>
+      </div>
+      <div class="flex items-center gap-2 bg-zinc-800 px-3 py-2 rounded-lg">
+        <span class="text-zinc-400 text-sm">📊</span>
+        <select id="marketFilter" class="bg-transparent text-sm outline-none" onchange="filter()">
+          <option value="">Todos Mercados</option>
+          <option value="h2h">1X2</option>
+          <option value="both_teams_to_score">Ambas Marcam</option>
+          <option value="double_chance">Dupla Chance</option>
+          <option value="over_under_2.5">Over/Under 2.5</option>
+          <option value="over_under_1.5">Over/Under 1.5</option>
+          <option value="over_under_3.5">Over/Under 3.5</option>
+          <option value="asian_handicap">Handicap</option>
+          <option value="exact_score">Placar Exato</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 mb-6" id="statsCards"></div>
+
+    <!-- Surebets List -->
+    <div id="surebetsList" class="space-y-3"></div>
+
+    <!-- Loading -->
+    <div id="loading" class="text-center py-12 text-zinc-500">
+      <div class="text-4xl mb-3 animate-pulse">🎯</div>
+      Carregando oportunidades...
+    </div>
+  </div>
+
+  <script>
+  const API = '';
+
+  let allSurebets = [];
+  let allStats = {};
+
+  async function loadData() {
+    document.getElementById('loading').style.display = 'block';
+
+    try {
+      const [surebetRes, statsRes] = await Promise.all([
+        fetch(API + '/api/surebets?limit=200').then(r => r.json()),
+        fetch(API + '/api/stats').then(r => r.json()),
+      ]);
+
+      allSurebets = surebetRes.opportunities || [];
+      allStats = statsRes.stats || {};
+
+      document.getElementById('loading').style.display = 'none';
+      renderStats(allStats);
+      filter();
+    } catch (e) {
+      document.getElementById('loading').innerHTML = '<div class="text-red-400 text-lg">❌ Servidor indisponível</div>';
+    }
+  }
+
+  function renderStats(stats) {
+    document.getElementById('statsCards').innerHTML = `
+      <div class="bg-zinc-800 rounded-lg p-3 text-center">
+        <div class="text-lg font-bold">${stats.totalMatches || 0}</div>
+        <div class="text-xs text-zinc-400">Jogos</div>
+      </div>
+      <div class="bg-zinc-800 rounded-lg p-3 text-center">
+        <div class="text-lg font-bold text-green-400">${stats.totalSurebets || 0}</div>
+        <div class="text-xs text-zinc-400">Surebets</div>
+      </div>
+      <div class="bg-zinc-800 rounded-lg p-3 text-center">
+        <div class="text-lg font-bold text-amber-400">${stats.bestProfit || 0}%</div>
+        <div class="text-xs text-zinc-400">Melhor %</div>
+      </div>
+      <div class="bg-zinc-800 rounded-lg p-3 text-center">
+        <div class="text-lg font-bold text-cyan-400">${stats.avgProfit || 0}%</div>
+        <div class="text-xs text-zinc-400">Média %</div>
+      </div>
+      <div class="bg-zinc-800 rounded-lg p-3 text-center">
+        <div class="text-lg font-bold">${stats.totalProviders || 0}</div>
+        <div class="text-xs text-zinc-400">Casas</div>
+      </div>
+      <div class="bg-zinc-800 rounded-lg p-3 text-center">
+        <div class="text-sm truncate" title="${(stats.providers||[]).join(', ')}">${(stats.providers||[]).slice(0,3).join(', ')}</div>
+        <div class="text-xs text-zinc-400">${(stats.providers||[]).length > 3 ? '+'+(stats.providers.length-3)+' mais' : ''}</div>
+      </div>
+    `;
+    document.getElementById('stats').textContent = `${stats.totalSurebets || 0} surebets`;
+    document.getElementById('updateTime').textContent = stats.lastUpdate ? new Date(stats.lastUpdate).toLocaleTimeString('pt-BR') : '';
+  }
+
+  function filter() {
+    const search = document.getElementById('search').value.toLowerCase();
+    const minProfit = parseFloat(document.getElementById('minProfit').value) || 0;
+    const market = document.getElementById('marketFilter').value;
+
+    let filtered = allSurebets.filter(s => {
+      if (search && !s.match.toLowerCase().includes(search) && !s.league.toLowerCase().includes(search)) return false;
+      if (s.profitPercent < minProfit) return false;
+      if (market && s.market !== market) return false;
+      return true;
+    });
+
+    const list = document.getElementById('surebetsList');
+    if (filtered.length === 0) {
+      list.innerHTML = '<div class="text-center py-8 text-zinc-500">Nenhuma oportunidade encontrada</div>';
+      return;
+    }
+
+    list.innerHTML = filtered.map(s => renderSurebet(s)).join('');
+  }
+
+  function renderSurebet(s) {
+    const profitClass = s.profitPercent >= 5 ? 'profit-high' : s.profitPercent >= 2 ? 'profit-mid' : 'profit-low';
+    const hours = new Date(s.startTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+    return `
+      <div class="surebet-card bg-zinc-800 rounded-xl p-4 border border-green-900/50">
+        <div class="flex items-start justify-between mb-3">
+          <div>
+            <div class="font-semibold text-base">${s.match}</div>
+            <div class="text-xs text-zinc-400">${s.league} • ${hours} • ${getMarketName(s.market)}</div>
+          </div>
+          <div class="text-right">
+            <div class="text-2xl font-bold ${profitClass}">${s.profitPercent}%</div>
+            <div class="text-xs text-zinc-400">lucro garantido</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+          ${s.legs.map((leg, i) => renderLeg(leg, i, s.bookmakers[i])).join('')}
+        </div>
+        <div class="flex items-center justify-between mt-3 pt-3 border-t border-zinc-700/50 text-xs text-zinc-400">
+          <span>Aposta total: <strong>R$${s.totalInvestment.toFixed(2)}</strong></span>
+          <span>Lucro: <strong class="${profitClass}">R$${s.guaranteedProfit.toFixed(2)}</strong></span>
+          <span>Casas: ${s.bookmakers.join(', ')}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderLeg(leg, idx) {
+    const bgColor = idx === 0 ? 'bg-blue-900/30 border-blue-700/50' :
+                    idx === 1 ? 'bg-amber-900/30 border-amber-700/50' :
+                    'bg-green-900/30 border-green-700/50';
+    return `
+      <div class="${bgColor} border rounded-lg p-2.5">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-sm font-medium">${leg.outcome}</span>
+          <span class="text-xs text-zinc-400">@${leg.odds.toFixed(2)}</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-zinc-400">${leg.bookmaker}</span>
+          <span>R$${leg.stake.toFixed(2)} → R$${leg.payout.toFixed(2)}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  function getMarketName(key) {
+    const names = {
+      'h2h': '1X2', 'both_teams_to_score': 'Ambas Marcam', 'double_chance': 'Dupla Chance',
+      'over_under_2.5': 'Over/Under 2.5', 'over_under_1.5': 'Over/Under 1.5',
+      'over_under_3.5': 'Over/Under 3.5', 'asian_handicap': 'Handicap Asiático',
+      'exact_score': 'Placar Exato', 'draw_no_bet': 'Draw No Bet'
+    };
+    return names[key] || key;
+  }
+
+  async function forceRefresh() {
+    document.getElementById('updateTime').textContent = 'Atualizando...';
+    await fetch(API + '/api/refresh', { method: 'POST' });
+    loadData();
+  }
+
+  // Auto-refresh every 30s
+  loadData();
+  setInterval(loadData, 30000);
+  </script>
+</body>
+</html>
