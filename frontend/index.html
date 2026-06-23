@@ -483,7 +483,18 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
 
 <!-- BOOKMAKERS TAB -->
 <div class="panel" id="panel-books">
-  <div style="margin-bottom:12px;font-size:12px;color:var(--muted2);">&#11088; = Favorite - ON/OFF = include in scan - Favorites appear first</div>
+  <div style="margin-bottom:12px;font-size:12px;color:var(--muted2);"><span>&#11088; = Favorita - ON/OFF = incluir no scan</span>
+    <button onclick="showAddBookmaker()" style="float:right;background:var(--green);color:#000;border:none;padding:4px 12px;border-radius:6px;cursor:pointer;font-weight:600;font-size:12px;">+ Adicionar Casa</button>
+  </div>
+  <div id="bm-add-form" style="display:none;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:12px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;">
+      <div class="fl"><label>Nome da Casa</label><input type="text" class="fi" id="bm-add-name" placeholder="Ex: Betano BR"></div>
+      <div class="fl"><label>Key (identificador)</label><input type="text" class="fi" id="bm-add-key" placeholder="Ex: betano_br"></div>
+      <button onclick="saveNewBookmaker()" style="background:var(--green);color:#000;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-weight:600;">Salvar</button>
+    </div>
+    <div style="margin-top:6px;font-size:11px;color:var(--muted2);">A key deve corresponder ao identificador usado pela The Odds API para esta casa.</div>
+    <div id="bm-add-err" style="color:var(--red);font-size:12px;margin-top:6px;display:none;"></div>
+  </div>
   <div class="bm-grid" id="bm-grid"></div>
 </div>
 
@@ -1050,6 +1061,9 @@ function launchApp() {
   var app = document.getElementById('app');
   if (setup) setup.style.display = 'none';
   if (app) { app.style.display = 'flex'; app.style.flexDirection = 'column'; }
+
+  // Sync bookmakers from backend
+  syncBookmakers();
 
   try { var h=localStorage.getItem('sbhv4'); if(h) S.hist=JSON.parse(h); } catch(e) {}
   try { var f=localStorage.getItem('sbfav'); if(f) FAV=JSON.parse(f); } catch(e) {}
@@ -1686,7 +1700,83 @@ function renderBudgetTab() {
   } catch(e) {}
 }
 
-// BOOKMAKERS - toggle favs/active = redetect only, zero API
+// BOOKMAKERS - sync from backend, CRUD
+function syncBookmakers() {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/api/bookmakers', true);
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      try {
+        var d = JSON.parse(xhr.responseText);
+        if (d.ok && d.bookmakers && d.bookmakers.length) {
+          BM_DATA = d.bookmakers.map(function(b) {
+            return { id: b.id, nom: b.nome, k: b.key, ativo: b.ativo !== false };
+          });
+          renderBooks();
+        }
+      } catch(e) {}
+    }
+  };
+  xhr.send();
+}
+function showAddBookmaker() {
+  var f = document.getElementById('bm-add-form');
+  if (f) f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+function saveNewBookmaker() {
+  var nameEl = document.getElementById('bm-add-name');
+  var keyEl = document.getElementById('bm-add-key');
+  var errEl = document.getElementById('bm-add-err');
+  var nome = (nameEl.value || '').trim();
+  var key = (keyEl.value || '').trim();
+  if (!nome || !key) { errEl.textContent = 'Preencha nome e key.'; errEl.style.display = 'block'; return; }
+  errEl.style.display = 'none';
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', '/api/bookmakers', true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.onload = function() {
+    if (xhr.status === 200 || xhr.status === 201) {
+      try {
+        var d = JSON.parse(xhr.responseText);
+        if (d.ok) {
+          BM_DATA = d.bookmakers.map(function(b) {
+            return { id: b.id, nom: b.nome, k: b.key, ativo: b.ativo !== false };
+          });
+          ACTIVE_BM[key] = true;
+          try { localStorage.setItem('sbactive', JSON.stringify(ACTIVE_BM)); } catch(e) {}
+          nameEl.value = ''; keyEl.value = '';
+          document.getElementById('bm-add-form').style.display = 'none';
+          renderBooks(); redetect();
+          return;
+        }
+      } catch(e) {}
+    }
+    errEl.textContent = 'Erro ao adicionar casa.';
+    errEl.style.display = 'block';
+  };
+  xhr.send(JSON.stringify({nome: nome, key: key}));
+}
+function deleteBookmaker(id, key) {
+  if (!confirm('Remover casa "' + key + '"?')) return;
+  var xhr = new XMLHttpRequest();
+  xhr.open('DELETE', '/api/bookmakers/' + id, true);
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      try {
+        var d = JSON.parse(xhr.responseText);
+        if (d.ok) {
+          BM_DATA = d.bookmakers.map(function(b) {
+            return { id: b.id, nom: b.nome, k: b.key, ativo: b.ativo !== false };
+          });
+          delete ACTIVE_BM[key];
+          try { localStorage.setItem('sbactive', JSON.stringify(ACTIVE_BM)); } catch(e) {}
+          renderBooks(); redetect();
+        }
+      } catch(e) {}
+    }
+  };
+  xhr.send();
+}
 var _bmSorted = []; // global for onclick access
 function renderBooks() {
   var grid=document.getElementById('bm-grid'); if(!grid) return;
@@ -1695,7 +1785,7 @@ function renderBooks() {
   var html='';
   for(var i=0;i<_bmSorted.length;i++){
     var b=_bmSorted[i]; var isFv=!!FAV[b.k]; var isAct=ACTIVE_BM[b.k]!==false;
-    var tagsHtml='';for(var j=0;j<b.services.length;j++)tagsHtml+='<span class="bm-tag">'+b.services[j].replace(/_/g,' ')+'</span>';
+    var tagsHtml='';if(b.services){for(var j=0;j<b.services.length;j++)tagsHtml+='<span class="bm-tag">'+b.services[j].replace(/_/g,' ')+'</span>';}
     var fIcon = isFv ? '&#11088;' : '&#9734;';
     var aLabel = isAct ? 'ON' : 'OFF';
     var aCls = isAct ? ' active' : '';
@@ -1704,6 +1794,7 @@ function renderBooks() {
       + '<div class="bm-actions">'
       + '<button class="fav-btn" onclick="togFav(_bmSorted['+i+'].k)">'+fIcon+'</button>'
       + '<button class="tog-btn'+aCls+'" onclick="togActive(_bmSorted['+i+'].k)">'+aLabel+'</button>'
+      + '<button onclick="deleteBookmaker('+b.id+',\''+b.k+'\')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;padding:0 4px;" title="Remover">&#128465;</button>'
       + '</div></div>';
   }
   grid.innerHTML=html;
