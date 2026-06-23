@@ -1990,21 +1990,46 @@ function startCD(){
 // AUTO-LOAD
 window.addEventListener('load',function(){
   try{ var sf=localStorage.getItem('sb_oddsfmt'); if(sf==='american'||sf==='decimal') S.oddsFormat=sf; }catch(e){}
-  try{
-    var sv=localStorage.getItem('sbpv4');
-    if(sv){
-      var p=JSON.parse(sv);
-      if(p){
-        var ks=Object.keys(p);for(var i=0;i<ks.length;i++)if(ks[i]!=='apiKey')C[ks[i]]=p[ks[i]];
-        var el;
-        el=document.getElementById('sr');if(el)el.value=C.minRoi;
-        el=document.getElementById('sb2');if(el)el.value=C.bankroll;
-        var rfSel=document.getElementById('srf');
-        if(rfSel){for(var i=0;i<rfSel.options.length;i++){if(parseInt(rfSel.options[i].value)===C.refreshSec){rfSel.value=C.refreshSec;break;}}}
-        launchApp();return;
+  // Auto-check if server already has API keys configured
+  async function tryAutoConnect(){
+    try{
+      var kr=await fetch('/api/api-keys');
+      if(kr.ok){
+        var kd=await kr.json();
+        if(kd.keys && kd.keys.length>0 && kd.keys[0].length>20){
+          // Server has valid keys - auto-launch
+          var sv=localStorage.getItem('sbpv4');
+          if(sv){
+            try{var p=JSON.parse(sv);if(p){var ks=Object.keys(p);for(var i=0;i<ks.length;i++)if(ks[i]!=='apiKey')C[ks[i]]=p[ks[i]];}}catch(e){}
+          }
+          var el;
+          el=document.getElementById('sr');if(el)el.value=C.minRoi;
+          el=document.getElementById('sb2');if(el)el.value=C.bankroll;
+          var rfSel=document.getElementById('srf');
+          if(rfSel){for(var i=0;i<rfSel.options.length;i++){if(parseInt(rfSel.options[i].value)===C.refreshSec){rfSel.value=C.refreshSec;break;}}}
+          launchApp();return;
+        }
       }
-    }
-  }catch(e){console.error('autoload:',e);}
+    }catch(e){}
+    // Fallback: check localStorage (legacy)
+    try{
+      var sv=localStorage.getItem('sbpv4');
+      if(sv){
+        var p=JSON.parse(sv);
+        if(p){
+          var ks=Object.keys(p);for(var i=0;i<ks.length;i++)if(ks[i]!=='apiKey')C[ks[i]]=p[ks[i]];
+          var el;
+          el=document.getElementById('sr');if(el)el.value=C.minRoi;
+          el=document.getElementById('sb2');if(el)el.value=C.bankroll;
+          var rfSel=document.getElementById('srf');
+          if(rfSel){for(var i=0;i<rfSel.options.length;i++){if(parseInt(rfSel.options[i].value)===C.refreshSec){rfSel.value=C.refreshSec;break;}}}
+          launchApp();return;
+        }
+      }
+    }catch(e){}
+  }
+  tryAutoConnect();
+}
 });
 </script>
 </body>
