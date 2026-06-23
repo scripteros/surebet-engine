@@ -39,14 +39,15 @@ export class MockProvider extends BaseProvider {
   }
 
   async fetchFootballOdds(): Promise<ProviderResult> {
-    await this.sleep(300); // Simulate API delay
+    await this.sleep(100); // Simulate API delay
     const matches: MatchOdds[] = [];
     const now = new Date();
+    const baseTime = now.getTime() - (now.getTime() % 60000); // Round to minute
 
     for (let i = 0; i < this.teams.length; i++) {
       const t = this.teams[i];
       const hours = 1 + Math.floor(i / 2);
-      const startTime = new Date(now.getTime() + hours * 3600000).toISOString();
+      const startTime = new Date(baseTime + hours * 3600000).toISOString();
 
       // Generate 1-3 markets per match
       const numMarkets = 2 + Math.floor(Math.random() * 4);
@@ -78,28 +79,30 @@ export class MockProvider extends BaseProvider {
   }
 
   private generateOdds(marketKey: string, outcomeName: string): number {
-    // Generate realistic odds with some variation between providers
-    const seed = (marketKey + outcomeName).length;
+    // Each provider uses a seeded deterministic offset + small random jitter
+    // to ensure some combos create surebet opportunities
+    const providerIndex = ['Betano','Bet365','Sportingbet','KTO','KingPanda','EstrelaBet'].indexOf(this.name);
     
-    // Base odds by market type
+    // Base odds by market type - tight margins so variations create surebets
     const baseOdds: Record<string, number[]> = {
-      'h2h': [2.10, 3.40, 3.80],
-      'both_teams_to_score': [1.85, 1.95],
-      'double_chance': [1.30, 1.22, 1.45],
-      'over_under_2.5': [1.90, 1.90],
-      'over_under_1.5': [1.45, 2.60],
-      'over_under_3.5': [2.75, 1.40],
-      'asian_handicap': [2.00, 1.80, 2.10, 1.70],
+      'h2h': [2.10, 3.50, 4.10],      // sum≈0.993 (surebet)
+      'both_teams_to_score': [1.85, 2.00], // sum≈1.04
+      'double_chance': [1.25, 1.20, 1.38], // sum≈1.03
+      'over_under_2.5': [1.90, 2.00],  // sum≈1.026
+      'over_under_1.5': [1.45, 2.65],  // sum≈1.067
+      'over_under_3.5': [2.65, 1.45],  // sum≈1.067
+      'asian_handicap': [1.95, 1.85, 2.05, 1.75],
       'exact_score': [7.00, 6.50, 9.00, 7.50, 11.00, 8.00, 12.00, 10.00],
-      'draw_no_bet': [1.60, 2.30],
+      'draw_no_bet': [1.60, 2.35],      // sum≈1.05
     };
 
     const odds = baseOdds[marketKey] || [2.00, 3.00, 3.00];
     const idx = this.calculateIndex(outcomeName, odds.length);
     
-    // Add 2-8% variation to create surebet opportunities
-    const variation = 0.97 + (Math.random() * 0.06);
-    return Math.round(odds[idx] * variation * 100) / 100;
+    // Provider-specific bias: each provider favors different outcomes
+    const providerBias = (providerIndex * 3 + outcomeName.length) % 7 * 0.012 - 0.036;
+    const totalVariation = 1.0 + providerBias + (Math.random() * 0.08 - 0.04);
+    return Math.round(Math.max(1.01, odds[idx] * totalVariation) * 100) / 100;
   }
 
   private calculateIndex(name: string, max: number): number {

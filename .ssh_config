@@ -1,0 +1,5 @@
+
+Host github.com-surebet
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/surebet_engine

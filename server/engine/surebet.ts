@@ -7,11 +7,12 @@ import { MatchOdds, Market, Outcome, SurebetOpportunity, SurebetLeg } from '../t
 export function findSurebets(allMatches: MatchOdds[]): SurebetOpportunity[] {
   const opportunities: SurebetOpportunity[] = [];
 
-  // Group matches by (homeTeam + awayTeam + startTime)
+  // Group matches by (homeTeam + awayTeam + round startTime to minute)
   const matchGroups = new Map<string, MatchOdds[]>();
 
   for (const match of allMatches) {
-    const key = `${match.homeTeam}|${match.awayTeam}|${match.startTime}`;
+  const roundedTime = match.startTime ? match.startTime.substring(0, 16) : match.startTime;
+  const key = `${match.homeTeam}|${match.awayTeam}|${roundedTime}`;
     const group = matchGroups.get(key) || [];
     group.push(match);
     matchGroups.set(key, group);
