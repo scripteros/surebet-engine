@@ -4,3 +4,4 @@ server/dist/
 .env
 api_key.txt
 node_modules/
+index.html
