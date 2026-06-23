@@ -193,8 +193,8 @@
           <span class="text-xs text-zinc-400">@${leg.odds.toFixed(2)}</span>
         </div>
         <div class="flex items-center justify-between text-xs">
-          <span class="text-zinc-400">${leg.bookmaker}</span>
-          <span>R$${leg.stake.toFixed(2)} → R$${leg.payout.toFixed(2)}</span>
+          <a href="${leg.url || '#'}" target="_blank" rel="noopener" class="text-cyan-400 hover:text-cyan-300 underline truncate mr-1" title="${leg.bookmaker}">${leg.bookmaker}</a>
+          <span class="text-zinc-300 whitespace-nowrap">R$${leg.stake.toFixed(2)} → R$${leg.payout.toFixed(2)}</span>
         </div>
       </div>
     `;

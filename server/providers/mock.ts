@@ -22,6 +22,16 @@ export class MockProvider extends BaseProvider {
     { home: 'Nacional', away: 'Peñarol', league: 'Uruguaio' },
   ];
 
+  // URL base para cada bookmaker gerar link direto pro jogo
+  private bookmakerUrls: Record<string, string> = {
+    Betano: 'https://www.betano.com/sport/football/',
+    Bet365: 'https://www.bet365.com/#/AC/B1/C1/D1002/',
+    Sportingbet: 'https://www.sportingbet.com/pt-br/sports/futebol-4',
+    KTO: 'https://www.kto.com/pt-br/esportes/futebol/',
+    KingPanda: 'https://www.kingpanda.com/pt-br/sports/futebol/',
+    EstrelaBet: 'https://www.estrelabet.com/pt-br/sports/futebol/',
+  };
+
   private markets = [
     { key: 'h2h', name: '1X2', outcomes: ['1', 'X', '2'] },
     { key: 'both_teams_to_score', name: 'Ambas Marcam', outcomes: ['Sim', 'Não'] },
@@ -33,6 +43,14 @@ export class MockProvider extends BaseProvider {
     { key: 'exact_score', name: 'Placar Exato', outcomes: ['1-0', '0-0', '2-0', '1-1', '2-1', '0-1', '0-2', '1-2'] },
     { key: 'draw_no_bet', name: 'Draw No Bet', outcomes: ['1', '2'] },
   ];
+
+  private getMatchUrl(homeTeam: string, awayTeam: string): string {
+    const base = this.bookmakerUrls[this.name] || 'https://www.google.com/search?q=';
+    const query = encodeURIComponent(`${homeTeam} vs ${awayTeam} ${this.name}`);
+    return this.bookmakerUrls[this.name] 
+      ? `${base}${encodeURIComponent(`${homeTeam}-vs-${awayTeam}`.toLowerCase().replace(/\s+/g, '-'))}`
+      : `https://www.google.com/search?q=${query}`;
+  }
 
   constructor(name: string = 'MockProvider') {
     super(name);
@@ -72,6 +90,7 @@ export class MockProvider extends BaseProvider {
         startTime,
         bookmaker: this.name,
         markets,
+        url: this.getMatchUrl(t.home, t.away),
       });
     }
 

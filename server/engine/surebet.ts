@@ -64,12 +64,15 @@ export function findSurebets(allMatches: MatchOdds[]): SurebetOpportunity[] {
       // Calculate stakes for each outcome
       const legs: SurebetLeg[] = bestOutcomes.map(outcome => {
         const stake = totalInvestment * ((1 / outcome.odds) / sumInverse);
+        // Find the match that provided this best outcome to get its URL
+        const sourceMatch = matches.find(m => m.bookmaker === outcome.bookmaker);
         return {
           outcome: outcome.name,
           bookmaker: outcome.bookmaker,
           odds: outcome.odds,
           stake: Math.round(stake * 100) / 100,
           payout: Math.round(stake * outcome.odds * 100) / 100,
+          url: sourceMatch?.url || '',
         };
       });
 

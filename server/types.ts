@@ -7,6 +7,7 @@ export interface MatchOdds {
   startTime: string
   bookmaker: string
   markets: Market[]
+  url?: string
 }
 
 export interface Market {
@@ -41,6 +42,7 @@ export interface SurebetLeg {
   odds: number
   stake: number
   payout: number
+  url?: string
 }
 
 export interface ProviderResult {
