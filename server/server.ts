@@ -61,27 +61,42 @@ function getDefaultBookmakers() {
 }
 
 // ============================================================
-// THE ODDS API PROXY
+// THE ODDS API PROXY — Multi-Key Rotation
 // ============================================================
-function getApiKey(): string {
-  const envKey = process.env.ODDS_API_KEY;
-  if (envKey) return envKey;
+const API_KEYS_PATH = path.join(__dirname, 'api_keys.json');
+
+function loadApiKeys(): string[] {
+  const defaults = ['04e307cabb5ec3e7b3596faa06c3e00b','e2dac342b787c959077c60dc420ebf7f3'];
   try {
-    const configPath = path.join(__dirname, '..', 'api_key.txt');
-    if (fs.existsSync(configPath)) {
-      return fs.readFileSync(configPath, 'utf-8').trim();
+    const envKey = process.env.ODDS_API_KEY;
+    if (envKey) return envKey.split(',').map(k => k.trim()).filter(Boolean);
+    if (fs.existsSync(API_KEYS_PATH)) {
+      const raw = JSON.parse(fs.readFileSync(API_KEYS_PATH, 'utf-8'));
+      if (Array.isArray(raw) && raw.length > 0) return raw.map(k => k.trim()).filter(Boolean);
     }
   } catch (e) {}
-  return '04e307cabb5ec3e7b3596faa06c3e00b';
+  return defaults;
+}
+
+function saveApiKeys(keys: string[]) {
+  try {
+    fs.writeFileSync(API_KEYS_PATH, JSON.stringify(keys.filter(k => k.trim()), null, 2));
+  } catch (e) { console.error('Erro salvando chaves:', e); }
+}
+
+function pickApiKey(): string {
+  const keys = loadApiKeys();
+  return keys[Math.floor(Math.random() * keys.length)];
 }
 
 const ODDS_API_BASE = 'https://api.the-odds-api.com/v4';
-const API_KEY = getApiKey();
+let API_KEY = pickApiKey();
 
 // Proxy: list sports
 app.get('/api/odds/sports', async (req, res) => {
   try {
-    const resp = await fetch(`${ODDS_API_BASE}/sports/?apiKey=${API_KEY}`);
+    const ak = pickApiKey();
+    const resp = await fetch(`${ODDS_API_BASE}/sports/?apiKey=${ak}`);
     const data = await resp.json();
     res.json(data);
   } catch (e: any) {
@@ -98,8 +113,10 @@ app.get('/api/odds/sport/:sport', async (req, res) => {
     const dateFormat = String(req.query.dateFormat || 'iso');
     const oddsFormat = String(req.query.oddsFormat || 'decimal');
     
+    const ak = pickApiKey();
+    
     const url = `${ODDS_API_BASE}/sports/${sport}/odds/`
-      + `?apiKey=${API_KEY}&regions=${regions}&markets=${markets}`
+      + `?apiKey=${ak}&regions=${regions}&markets=${markets}`
       + `&oddsFormat=${oddsFormat}&dateFormat=${dateFormat}`;
     
     const resp = await fetch(url);
@@ -115,13 +132,28 @@ app.get('/api/odds/sport/:sport/events', async (req, res) => {
   try {
     const { sport } = req.params;
     const dateFormat = String(req.query.dateFormat || 'iso');
-    const url = `${ODDS_API_BASE}/sports/${sport}/events/?apiKey=${API_KEY}&dateFormat=${dateFormat}`;
+    const ak = pickApiKey();
+    const url = `${ODDS_API_BASE}/sports/${sport}/events/?apiKey=${ak}&dateFormat=${dateFormat}`;
     const resp = await fetch(url);
     const data = await resp.json();
     res.json(data);
   } catch (e: any) {
     res.status(500).json({ error: e.message });
   }
+});
+
+// ============================================================
+// API KEY MANAGEMENT
+// ============================================================
+app.get('/api/api-keys', (req, res) => {
+  res.json({ ok: true, keys: loadApiKeys(), active: loadApiKeys().length, index: 0 });
+});
+
+app.put('/api/api-keys', (req, res) => {
+  const { keys } = req.body;
+  if (!Array.isArray(keys)) return res.status(400).json({ ok: false, error: 'keys deve ser um array' });
+  saveApiKeys(keys.map(k => k.trim()).filter(Boolean));
+  res.json({ ok: true, keys: loadApiKeys() });
 });
 
 // ============================================================
@@ -187,7 +219,7 @@ app.get(/^\/(?!api\/).*/, (req, res) => {
 // ============================================================
 app.listen(PORT, () => {
   console.log(`\n🎯 Surebet Engine Brasileiro rodando em http://localhost:${PORT}`);
-  console.log(`📡 Proxy API: The Odds API (chave configurada)`);
+  console.log(`📡 Proxy API: The Odds API (${loadApiKeys().length} chaves configuradas - rodízio aleatório)`);
   console.log(`📊 Bookmakers cadastrados: ${loadBookmakers().length}`);
   console.log(`💰 Moeda: BRL (R$)`);
   console.log(`🌐 Frontend: http://localhost:${PORT}`);
