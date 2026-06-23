@@ -2,3 +2,5 @@ server/node_modules/
 server/dist/
 *.log
 .env
+api_key.txt
+node_modules/

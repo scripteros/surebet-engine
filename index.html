@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SureBet BR - Apostas Esportivas</title>
+<title>SureBet Pro v4 · Ontario</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap');
 :root{
@@ -285,34 +285,34 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
 <div id="setup">
 <div class="sbox">
   <div class="sbrand">
-  <div class="sicon">&#9889;</div>
-  <div><div class="sname">SureBet BR</div><div class="stag">Cache Inteligente • Gestão de Banca</div></div>
+    <div class="sicon">&#9889;</div>
+    <div><div class="sname">SureBet Pro v4</div><div class="stag">Smart Cache - Budget Manager</div></div>
   </div>
-  <div class="sh">Configurar Scanner</div>
-  <div class="ssub">Cache inteligente • 500 requisições/mês • Arbitragem precisa • Casas brasileiras</div>
+  <div class="sh">Configure Scanner</div>
+  <div class="ssub">Smart cache - 500 req/month budget - Precise arbitrage - 33 Ontario bookmakers</div>
   <div class="err-box" id="err-box"></div>
   <div class="fl">
     <label>API Key - The Odds API</label>
     <div class="pw"><input type="password" class="fi" id="k" placeholder="Paste your key here..." autocomplete="off"><button class="eye" onclick="tgEye()">&#128065;</button></div>
   </div>
   <div class="g2">
-    <div class="fl"><label>ROI Mínimo (%)</label><input type="number" class="fi" id="sr" value="1" min="0.1" step="0.1"></div>
-    <div class="fl"><label>Banca (R$)</label><input type="number" class="fi" id="sb2" value="1000" min="10"></div>
+    <div class="fl"><label>Minimum ROI (%)</label><input type="number" class="fi" id="sr" value="1" min="0.1" step="0.1"></div>
+    <div class="fl"><label>Bankroll ($CAD)</label><input type="number" class="fi" id="sb2" value="1000" min="10"></div>
   </div>
   <div class="fl">
-  <label>Intervalo de Atualização</label>
-  <select class="fi" id="srf">
-    <option value="30">30 segundos</option>
-    <option value="60">1 minuto</option>
-    <option value="90" selected>90 segundos</option>
-    <option value="120">2 minutos</option>
-    <option value="300">5 minutos</option>
-    <option value="600">10 minutos</option>
-    <option value="900">15 minutos</option>
-  </select>
+    <label>Refresh Interval</label>
+    <select class="fi" id="srf">
+      <option value="30">30 seconds</option>
+      <option value="60">1 minute</option>
+      <option value="90" selected>90 seconds</option>
+      <option value="120">2 minutes</option>
+      <option value="300">5 minutes</option>
+      <option value="600">10 minutes</option>
+      <option value="900">15 minutes</option>
+    </select>
   </div>
-  <button class="cta" id="cbtn" onclick="doConnect()">&#9889; Conectar e Iniciar</button>
-  <div class="snote">&#128274; Chave armazenada localmente • Cache inteligente • Máx 500 req/mês</div>
+  <button class="cta" id="cbtn" onclick="doConnect()">&#9889; Connect and Launch</button>
+  <div class="snote">&#128274; Key stored locally - Smart cache - 500 req/month max</div>
 </div>
 </div>
 
@@ -322,71 +322,71 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
 
 <div class="topbar">
   <div class="tl">
-    <div class="tlogo">&#9889; SureBet <span>BR</span></div>
+    <div class="tlogo">&#9889; SureBet <span>Pro v4</span></div>
     <div class="vpill"><div class="vdot" id="vdot"></div><span id="vstxt">Init</span></div>
   </div>
   <div class="tr">
     <div class="tclock">&#9201; <span id="cdtxt">--:--</span></div>
-    <button class="ticon" id="sndbtn" onclick="togSnd()" title="Som">&#128276;</button>
-    <button class="ticon" id="simbtn" onclick="togSim()" title="Modo Simulação">&#128190;</button>
-    <button class="ticon" onclick="goTab('settings')" title="Configurações">&#9881;</button>
-    <button class="ticon" onclick="doLogout()" title="Desconectar">&#10005;</button>
+    <button class="ticon" id="sndbtn" onclick="togSnd()" title="Sound">&#128276;</button>
+    <button class="ticon" id="simbtn" onclick="togSim()" title="Simulation Mode">&#128190;</button>
+    <button class="ticon" onclick="goTab('settings')" title="Settings">&#9881;</button>
+    <button class="ticon" onclick="doLogout()" title="Disconnect">&#10005;</button>
   </div>
 </div>
 
 <!-- SIMULATION MODE BANNER -->
 <div class="sim-bar" id="sim-bar">
-  <span class="sim-label">&#128190; MODO SIMULAÇÃO</span>
-  <span class="sim-meta">Status: <strong style="color:var(--green);" id="sim-status">Usando dados em cache</strong></span>
-  <span class="sim-meta">Idade do cache: <span id="sim-age">Nenhum cache carregado</span></span>
-  <span class="sim-meta">Último fetch API: <span id="sim-ts">Nunca</span></span>
-  <span class="sim-meta" id="sim-nextaction" style="color:var(--gold);">Próxima ação: Pressione "Atualizar" para carregar odds.</span>
+  <span class="sim-label">&#128190; SIMULATION MODE</span>
+  <span class="sim-meta">Status: <strong style="color:var(--green);" id="sim-status">Using cached data only</strong></span>
+  <span class="sim-meta">Cache age: <span id="sim-age">No cached data loaded</span></span>
+  <span class="sim-meta">Last API fetch: <span id="sim-ts">Never</span></span>
+  <span class="sim-meta" id="sim-nextaction" style="color:var(--gold);">Next action: Press "Refresh Now" to load odds.</span>
   <div style="margin-left:auto;display:flex;gap:8px;">
-    <button class="sim-btn go" onclick="exitSim()">&#8635; Atualizar Agora</button>
-    <button class="sim-btn stay" onclick="keepSim()">Continuar com Cache</button>
+    <button class="sim-btn go" onclick="exitSim()">&#8635; Refresh Now</button>
+    <button class="sim-btn stay" onclick="keepSim()">Continue with Cache</button>
   </div>
 </div>
 
 <!-- STARTUP CACHE BANNER -->
 <div class="startup-bar" id="startup-bar">
-  <span style="font-size:12px;font-weight:700;color:var(--purple);">&#9889; Dados em cache disponíveis</span>
+  <span style="font-size:12px;font-weight:700;color:var(--purple);">&#9889; Cached data available</span>
   <span style="font-size:11px;color:var(--muted2);" id="startup-info">--</span>
   <div style="margin-left:auto;display:flex;gap:8px;">
-    <button class="sim-btn stay" onclick="useCache()" style="border-color:rgba(167,139,250,.4);color:var(--purple);">&#128194; Usar Cache</button>
-    <button class="sim-btn go" onclick="fetchFresh()">&#8635; Buscar Dados Novos</button>
+    <button class="sim-btn stay" onclick="useCache()" style="border-color:rgba(167,139,250,.4);color:var(--purple);">&#128194; Use Cache</button>
+    <button class="sim-btn go" onclick="fetchFresh()">&#8635; Fetch Fresh Data</button>
   </div>
 </div>
 
 <!-- BUDGET BAR -->
 <div class="budget-bar">
-  <div class="bi" id="bi-month"><span>Mês (limite):</span><strong id="bm-used">0</strong><span id="bm-lim">/500</span><div class="btrack"><div class="bfill" id="bm-bar" style="width:0%"></div></div></div>
-  <div class="bi" id="bi-day"><span>Hoje:</span><strong id="bd-used">0</strong><span id="bd-rec">/15 rec</span><div class="btrack"><div class="bfill" id="bd-bar" style="width:0%"></div></div></div>
-  <div class="bi" id="bi-session"><span>Sessão:</span><strong id="bs-used">0</strong><span id="bs-rec">/10 rec</span><div class="btrack"><div class="bfill" id="bs-bar" style="width:0%"></div></div></div>
+  <div class="bi" id="bi-month"><span>Month (hard limit):</span><strong id="bm-used">0</strong><span id="bm-lim">/500</span><div class="btrack"><div class="bfill" id="bm-bar" style="width:0%"></div></div></div>
+  <div class="bi" id="bi-day"><span>Today:</span><strong id="bd-used">0</strong><span id="bd-rec">/15 rec</span><div class="btrack"><div class="bfill" id="bd-bar" style="width:0%"></div></div></div>
+  <div class="bi" id="bi-session"><span>Session:</span><strong id="bs-used">0</strong><span id="bs-rec">/10 rec</span><div class="btrack"><div class="bfill" id="bs-bar" style="width:0%"></div></div></div>
   <span class="cache-pill" id="cache-pill">&#128190; Cache: --</span>
-  <button class="rbtn" style="padding:3px 10px;font-size:11px;" onclick="goTab('budget')">&#128202; Detalhes Orçamento</button>
-  <span style="margin-left:auto;font-size:11px;color:var(--muted);" id="last-ts">Nunca atualizado</span>
+  <button class="rbtn" style="padding:3px 10px;font-size:11px;" onclick="goTab('budget')">&#128202; Budget Details</button>
+  <span style="margin-left:auto;font-size:11px;color:var(--muted);" id="last-ts">Never refreshed</span>
 </div>
 <div id="low-budget-rec" style="display:none;background:rgba(248,113,113,0.08);border-bottom:1px solid rgba(248,113,113,0.25);padding:8px 14px;font-size:12px;color:var(--red);align-items:center;gap:10px;">
-  <span>&#9888; Orçamento baixo — recomendado: Modo Simulação, cache primeiro, atualize apenas eventos monitorados.</span>
-  <button class="rbtn" style="margin-left:auto;padding:3px 10px;font-size:11px;" onclick="enterSim()">Ativar Modo Simulação</button>
+  <span>&#9888; Low API budget — recommend: Simulation Mode, cache-first browsing, refresh only watchlisted events.</span>
+  <button class="rbtn" style="margin-left:auto;padding:3px 10px;font-size:11px;" onclick="enterSim()">Enable Simulation Mode</button>
 </div>
 
 <!-- SCOPE SELECTOR -->
 <div class="scope-bar">
-  <span class="scope-lbl">Modo:</span>
+  <span class="scope-lbl">Mode:</span>
   <button class="scope-btn on" data-scope="global" onclick="setScope(this)">&#127757; Global</button>
-  <button class="scope-btn" data-scope="fav" onclick="setScope(this)">&#11088; Favoritos</button>
-  <button class="scope-btn" data-scope="auto" onclick="setScope(this)">&#9889; Auto</button>
+  <button class="scope-btn" data-scope="ontario" onclick="setScope(this)">&#127809; Ontario</button>
+  <button class="scope-btn" data-scope="favorites" onclick="setScope(this)">&#11088; Favorites</button>
   <div class="scope-info" id="scope-info">Loading...</div>
 </div>
 
 <!-- STATS BAR -->
 <div class="statsbar">
-  <div class="sc"><div class="sc-l">Surebets</div><div class="sc-v g" id="s0">--</div><div class="sc-s">ativas</div></div>
-  <div class="sc"><div class="sc-l">Melhor ROI</div><div class="sc-v gold" id="s1">--</div><div class="sc-s">oportunidade</div></div>
-  <div class="sc"><div class="sc-l">ROI Médio</div><div class="sc-v g" id="s5">--</div><div class="sc-s">todas surebets</div></div>
-  <div class="sc"><div class="sc-l">Casas</div><div class="sc-v blue" id="s3">--</div><div class="sc-s">escaneadas</div></div>
-  <div class="sc"><div class="sc-l">Eventos</div><div class="sc-v" id="s4">--</div><div class="sc-s">analisados</div></div>
+  <div class="sc"><div class="sc-l">Surebets</div><div class="sc-v g" id="s0">--</div><div class="sc-s">active</div></div>
+  <div class="sc"><div class="sc-l">Best ROI</div><div class="sc-v gold" id="s1">--</div><div class="sc-s">opportunity</div></div>
+  <div class="sc"><div class="sc-l">Average ROI</div><div class="sc-v g" id="s5">--</div><div class="sc-s">all surebets</div></div>
+  <div class="sc"><div class="sc-l">Bookmakers</div><div class="sc-v blue" id="s3">--</div><div class="sc-s">scanned</div></div>
+  <div class="sc"><div class="sc-l">Events</div><div class="sc-v" id="s4">--</div><div class="sc-s">analyzed</div></div>
 </div>
 
 <!-- TABS -->
@@ -394,12 +394,12 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
   <div class="tab on" onclick="goTab('scan')">Surebets <span class="tbadge" id="b0">0</span></div>
   <div class="tab" onclick="goTab('dash')">Dashboard</div>
   <div class="tab" onclick="goTab('cache')">Cache &#128190;</div>
-  <div class="tab" onclick="goTab('budget')">Orçamento &#128202;</div>
-  <div class="tab" onclick="goTab('books')">Casas</div>
-  <div class="tab" onclick="goTab('calc')">Calculadora</div>
-  <div class="tab" onclick="goTab('hist')">Histórico <span class="tbadge" id="b2">0</span></div>
+  <div class="tab" onclick="goTab('budget')">Budget &#128202;</div>
+  <div class="tab" onclick="goTab('books')">Bookmakers <span class="tbadge">33</span></div>
+  <div class="tab" onclick="goTab('calc')">Calculator</div>
+  <div class="tab" onclick="goTab('hist')">History <span class="tbadge" id="b2">0</span></div>
   <div class="tab" onclick="goTab('debug')">Debug</div>
-  <div class="tab" onclick="goTab('settings')">Configurações</div>
+  <div class="tab" onclick="goTab('settings')">Settings</div>
 </div>
 
 <div class="main">
@@ -407,17 +407,17 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
 <!-- SCAN TAB -->
 <div class="panel on" id="panel-scan">
   <div class="spills">
-    <div class="spill on" data-s="all" onclick="setSport(this)">&#127757; Todos</div>
-    <div class="spill" data-s="soccer" onclick="setSport(this)">&#9917; Futebol</div>
-    <div class="spill" data-s="basketball" onclick="setSport(this)">&#127936; Basquete</div>
-    <div class="spill" data-s="tennis" onclick="setSport(this)">&#127934; Tênis</div>
-    <div class="spill" data-s="baseball" onclick="setSport(this)">&#9918; Beisebol</div>
-    <div class="spill" data-s="americanfootball" onclick="setSport(this)">&#127944; NFL</div>
-    <div class="spill" data-s="icehockey" onclick="setSport(this)">&#127944; Hóquei</div>
+    <div class="spill on" data-s="all" onclick="setSport(this)">&#127757; All</div>
+    <div class="spill" data-s="tennis" onclick="setSport(this)">&#127934; Tennis</div>
+    <div class="spill" data-s="basketball" onclick="setSport(this)">&#127936; Basketball</div>
+    <div class="spill" data-s="baseball" onclick="setSport(this)">&#9918; Baseball</div>
     <div class="spill" data-s="mma" onclick="setSport(this)">&#129354; MMA</div>
+    <div class="spill" data-s="soccer" onclick="setSport(this)">&#9917; Soccer</div>
+    <div class="spill" data-s="icehockey" onclick="setSport(this)">&#127944; Hockey</div>
+    <div class="spill" data-s="americanfootball" onclick="setSport(this)">&#127944; NFL</div>
   </div>
   <div class="roi-row">
-    <span class="roi-lbl">ROI Mín:</span>
+    <span class="roi-lbl">Min ROI:</span>
     <button class="rqbtn on" data-roi="cfg" onclick="setRoi(this)">Config</button>
     <button class="rqbtn" data-roi="1" onclick="setRoi(this)">1%</button>
     <button class="rqbtn" data-roi="2" onclick="setRoi(this)">2%</button>
@@ -427,36 +427,36 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
   </div>
   <div class="toolbar">
     <select class="tbar-sel" id="sortsel" onchange="renderScan()">
-      <option value="roi">ROI Maior</option>
-      <option value="profit">Lucro Maior</option>
-      <option value="time">Horário</option>
-      <option value="fresh">Atualização</option>
+      <option value="roi">ROI High</option>
+      <option value="profit">Profit High</option>
+      <option value="time">Event Time</option>
+      <option value="fresh">Freshness</option>
     </select>
     <button class="rbtn" id="oddsfmtbtn" onclick="toggleOddsFormat()">Decimal</button>
-    <button class="rbtn ml" id="rfbtn" onclick="manualRefresh()">&#8635; Atualizar</button>
+    <button class="rbtn ml" id="rfbtn" onclick="manualRefresh()">&#8635; Refresh</button>
   </div>
   <div id="scan-list"></div>
 </div>
 
 <!-- DASHBOARD TAB -->
 <div class="panel" id="panel-dash">
-  <div class="slabel">Métricas da Sessão</div>
+  <div class="slabel">Session Metrics</div>
   <div class="dash-grid">
-    <div class="ds"><div class="ds-l">Eventos</div><div class="ds-v g" id="d-ev">--</div><div class="ds-s">analisados</div></div>
-    <div class="ds"><div class="ds-l">Casas</div><div class="ds-v blue" id="d-bk">--</div><div class="ds-s">escaneadas</div></div>
-    <div class="ds"><div class="ds-l">Duração</div><div class="ds-v gold" id="d-dur">--</div><div class="ds-s">segundos</div></div>
-    <div class="ds"><div class="ds-l">Surebets</div><div class="ds-v g" id="d-sb">--</div><div class="ds-s">acima do limiar</div></div>
-    <div class="ds"><div class="ds-l">Melhor ROI</div><div class="ds-v gold" id="d-mr">--</div><div class="ds-s">nesta sessão</div></div>
-    <div class="ds"><div class="ds-v r" id="d-api">--</div><div class="ds-l">API Restante</div><div class="ds-s">neste mês</div></div>
+    <div class="ds"><div class="ds-l">Events</div><div class="ds-v g" id="d-ev">--</div><div class="ds-s">analyzed</div></div>
+    <div class="ds"><div class="ds-l">Bookmakers</div><div class="ds-v blue" id="d-bk">--</div><div class="ds-s">scanned</div></div>
+    <div class="ds"><div class="ds-l">Scan Duration</div><div class="ds-v gold" id="d-dur">--</div><div class="ds-s">seconds</div></div>
+    <div class="ds"><div class="ds-l">Surebets Found</div><div class="ds-v g" id="d-sb">--</div><div class="ds-s">above threshold</div></div>
+    <div class="ds"><div class="ds-l">Best ROI</div><div class="ds-v gold" id="d-mr">--</div><div class="ds-s">this session</div></div>
+    <div class="ds"><div class="ds-v r" id="d-api">--</div><div class="ds-l">API Remaining</div><div class="ds-s">this month</div></div>
   </div>
-  <div class="slabel">Gráficos em Tempo Real</div>
+  <div class="slabel">Real-Time Charts</div>
   <div class="charts-grid">
-    <div class="chart-card"><div class="chart-h">ROI Máx por Scan <span class="chart-sub" id="cs0"></span></div><canvas id="roiChart" height="150"></canvas></div>
-    <div class="chart-card"><div class="chart-h">Volume de Surebets <span class="chart-sub" id="cs1"></span></div><canvas id="volChart" height="150"></canvas></div>
+    <div class="chart-card"><div class="chart-h">Max ROI per Scan <span class="chart-sub" id="cs0"></span></div><canvas id="roiChart" height="150"></canvas></div>
+    <div class="chart-card"><div class="chart-h">Surebet Volume <span class="chart-sub" id="cs1"></span></div><canvas id="volChart" height="150"></canvas></div>
   </div>
   <div class="charts-grid">
-    <div class="chart-card"><div class="chart-h">Chamadas API por Scan</div><canvas id="apiChart" height="150"></canvas></div>
-    <div class="chart-card"><div class="chart-h">Top Casas Envolvidas</div><canvas id="bookChart" height="150"></canvas></div>
+    <div class="chart-card"><div class="chart-h">API Calls per Scan</div><canvas id="apiChart" height="150"></canvas></div>
+    <div class="chart-card"><div class="chart-h">Top Bookmakers Involved</div><canvas id="bookChart" height="150"></canvas></div>
   </div>
 </div>
 
@@ -490,24 +490,24 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
 <!-- CALCULATOR TAB -->
 <div class="panel" id="panel-calc">
   <div class="ccard">
-    <div class="ccard-h">Odds Decimais - 2 ou 3 resultados</div>
+    <div class="ccard-h">Decimal Odds - 2 or 3 outcomes</div>
     <div class="irow">
-      <div class="fl"><label>Banca (R$)</label><input type="number" class="fi" id="ck-bk" value="1000" min="1"></div>
-      <div class="fl"><label>Máx por Casa (R$)</label><input type="number" class="fi" id="ck-mx" placeholder="Ilimitado"></div>
+      <div class="fl"><label>Bankroll ($CAD)</label><input type="number" class="fi" id="ck-bk" value="1000" min="1"></div>
+      <div class="fl"><label>Max Stake/Bookmaker ($)</label><input type="number" class="fi" id="ck-mx" placeholder="Unlimited"></div>
     </div>
     <div class="irow">
       <div class="fl"><label>Odds A</label><input type="number" class="fi" id="co1" value="2.10" step="0.01" min="1.01"></div>
       <div class="fl"><label>Odds B</label><input type="number" class="fi" id="co2" value="2.05" step="0.01" min="1.01"></div>
     </div>
-    <div class="fl"><label>Odds C (opcional - 3º resultado ex. Empate)</label><input type="number" class="fi" id="co3" step="0.01" min="1.01"></div>
-    <button class="abtn" onclick="calcNow()">&#9889; Calcular Apostas Ideais</button>
+    <div class="fl"><label>Odds C (optional - 3rd outcome e.g. Draw)</label><input type="number" class="fi" id="co3" placeholder="e.g. 3.40" step="0.01" min="1.01"></div>
+    <button class="abtn" onclick="calcNow()">&#9889; Calculate Optimal Stakes</button>
     <div class="ires" id="calc-res" style="display:none">
-      <div class="rtile"><div class="rtile-l">Valor A</div><div class="rtile-v g" id="cr1">--</div></div>
-      <div class="rtile"><div class="rtile-l">Valor B</div><div class="rtile-v g" id="cr2">--</div></div>
-      <div class="rtile" id="cr3-tile" style="display:none"><div class="rtile-l">Valor C</div><div class="rtile-v g" id="cr3">--</div></div>
-      <div class="rtile"><div class="rtile-l">ROI Garantido</div><div class="rtile-v gold" id="cr4">--</div></div>
-      <div class="rtile"><div class="rtile-l">Lucro Líquido</div><div class="rtile-v gold" id="cr5">--</div></div>
-      <div class="rtile" style="grid-column:1/-1"><div class="rtile-l">Retorno Garantido (qualquer resultado)</div><div class="rtile-v g" id="cr6">--</div></div>
+      <div class="rtile"><div class="rtile-l">Stake A</div><div class="rtile-v g" id="cr1">--</div></div>
+      <div class="rtile"><div class="rtile-l">Stake B</div><div class="rtile-v g" id="cr2">--</div></div>
+      <div class="rtile" id="cr3-tile" style="display:none"><div class="rtile-l">Stake C</div><div class="rtile-v g" id="cr3">--</div></div>
+      <div class="rtile"><div class="rtile-l">Guaranteed ROI</div><div class="rtile-v gold" id="cr4">--</div></div>
+      <div class="rtile"><div class="rtile-l">Net Profit</div><div class="rtile-v gold" id="cr5">--</div></div>
+      <div class="rtile" style="grid-column:1/-1"><div class="rtile-l">Guaranteed Return (regardless of outcome)</div><div class="rtile-v g" id="cr6">--</div></div>
     </div>
     <div id="calc-err" style="display:none;margin-top:12px;color:var(--red);font-size:13px;"></div>
   </div>
@@ -534,51 +534,51 @@ footer{padding:12px 16px;text-align:center;font-size:10px;color:var(--muted);bor
   <div class="slabel">Settings</div>
   <div class="sgrid">
     <div class="scard">
-      <div class="scard-h">Limiares de ROI</div>
-      <div class="srow"><div class="fl"><label>ROI Mínimo (%)</label><input type="number" class="fi" id="ss-roi" step="0.1" min="0.1"></div></div>
+      <div class="scard-h">ROI Thresholds</div>
+      <div class="srow"><div class="fl"><label>Minimum ROI (%)</label><input type="number" class="fi" id="ss-roi" step="0.1" min="0.1"></div></div>
       <div class="srow"><div class="fl"><label>HOT Threshold (%)</label><input type="number" class="fi" id="ss-hot" step="0.1"></div></div>
       <div class="srow"><div class="fl"><label>ELITE Threshold (%)</label><input type="number" class="fi" id="ss-elite" step="0.1"></div></div>
     </div>
     <div class="scard">
-      <div class="scard-h">Banca</div>
-      <div class="srow"><div class="fl"><label>Banca (R$)</label><input type="number" class="fi" id="ss-bk" min="10"></div></div>
-      <div class="srow"><div class="fl"><label>Máx % por surebet</label><input type="number" class="fi" id="ss-pct" min="1" max="100"></div></div>
-      <div class="srow"><div class="fl"><label>Máx por Casa (R$)</label><input type="number" class="fi" id="ss-mx" placeholder="Ilimitado"></div></div>
+      <div class="scard-h">Bankroll</div>
+      <div class="srow"><div class="fl"><label>Bankroll ($CAD)</label><input type="number" class="fi" id="ss-bk" min="10"></div></div>
+      <div class="srow"><div class="fl"><label>Max % per surebet</label><input type="number" class="fi" id="ss-pct" min="1" max="100"></div></div>
+      <div class="srow"><div class="fl"><label>Max Stake/Bookmaker ($)</label><input type="number" class="fi" id="ss-mx" placeholder="Unlimited"></div></div>
     </div>
     <div class="scard">
-      <div class="scard-h">Atualização e Cache</div>
-      <div class="srow"><div class="fl"><label>Intervalo de Atualização</label>
+      <div class="scard-h">Refresh and Cache</div>
+      <div class="srow"><div class="fl"><label>Refresh Interval</label>
         <select class="fi" id="ss-rf">
-          <option value="30">30 segundos</option>
-          <option value="60">1 minuto</option>
-          <option value="90">90 segundos</option>
-          <option value="120">2 minutos</option>
-          <option value="300">5 minutos</option>
-          <option value="600">10 minutos</option>
-          <option value="900">15 minutos</option>
+          <option value="30">30 seconds</option>
+          <option value="60">1 minute</option>
+          <option value="90">90 seconds</option>
+          <option value="120">2 minutes</option>
+          <option value="300">5 minutes</option>
+          <option value="600">10 minutes</option>
+          <option value="900">15 minutes</option>
         </select>
       </div></div>
-      <div class="srow"><div class="fl"><label>Cache TTL (segundos)</label><input type="number" class="fi" id="ss-cache" value="120" min="30"></div></div>
-      <div class="srow"><div class="fl"><label>Alertas Sonoros</label>
-        <select class="fi" id="ss-snd"><option value="1">Ativado</option><option value="0">Desativado</option></select>
+      <div class="srow"><div class="fl"><label>Cache TTL (seconds)</label><input type="number" class="fi" id="ss-cache" value="120" min="30"></div></div>
+      <div class="srow"><div class="fl"><label>Sound Alerts</label>
+        <select class="fi" id="ss-snd"><option value="1">Enabled</option><option value="0">Disabled</option></select>
       </div></div>
     </div>
     <div class="scard">
-      <div class="scard-h">API e Orçamento</div>
+      <div class="scard-h">API and Budget</div>
       <div class="srow"><div class="fl"><label>The Odds API Key</label>
         <div class="pw"><input type="password" class="fi" id="ss-key" style="background:var(--surface)"><button class="eye" onclick="tgEye2()">&#128065;</button></div>
       </div></div>
-      <div class="srow"><div class="fl"><label>Orçamento Mensal (máx 500)</label><input type="number" class="fi" id="ss-budget" value="500" min="10" max="500"></div></div>
-      <div class="srow"><div class="fl"><label>Última Atualização</label>
+      <div class="srow"><div class="fl"><label>Monthly Budget (max 500)</label><input type="number" class="fi" id="ss-budget" value="500" min="10" max="500"></div></div>
+      <div class="srow"><div class="fl"><label>Last Update</label>
         <div class="fi" style="color:var(--muted2);font-family:var(--mono);font-size:12px;cursor:default" id="last-update-display">--</div>
       </div></div>
     </div>
-    <button class="sbtn" onclick="saveSet()">Salvar Configurações</button>
+    <button class="sbtn" onclick="saveSet()">Save Settings</button>
   </div>
 </div>
 
 </div><!-- .main -->
-<footer>SureBet BR - Cache Inteligente - 500 req/mês - Análise de Arbitragem - Casas Brasileiras</footer>
+<footer>SureBet Pro v4 - Smart Cache - 500 req/month budget - 33 iGaming Ontario Bookmakers - ConnexOntario 1-866-531-2600</footer>
 </div><!-- #app -->
 
 <div class="toasts" id="toasts"></div>
@@ -620,49 +620,52 @@ var ACTIVE_BM = {};
 
 // ── BOOKMAKERS ────────────────────────────────────────────
 var BM_DATA = [
-  {id:1,nom:'Bet365',k:'bet365',ativo:true},
-  {id:2,nom:'Betano',k:'betano',ativo:true},
-  {id:3,nom:'Sportingbet',k:'sportingbet',ativo:true},
-  {id:4,nom:'KTO',k:'kto',ativo:true},
-  {id:5,nom:'KingPanda',k:'kingpanda',ativo:true},
-  {id:6,nom:'EstrelaBet',k:'estrelabet',ativo:true},
-  {id:7,nom:'BETesporte',k:'betesporte',ativo:true},
-  {id:8,nom:'Superbet',k:'superbet',ativo:true},
-  {id:9,nom:'PixBet',k:'pixbet',ativo:true},
-  {id:10,nom:'BR4Bet',k:'br4bet',ativo:true},
-  {id:11,nom:'Bodog',k:'bodog',ativo:true},
-  {id:12,nom:'Bet7k',k:'bet7k',ativo:true},
-  {id:13,nom:'Rivalo',k:'rivalo',ativo:true},
-  {id:14,nom:'Betmotion',k:'betmotion',ativo:true},
-  {id:15,nom:'LeoVegas',k:'leovegas',ativo:true},
-  {id:16,nom:'Betway',k:'betway',ativo:true},
-  {id:17,nom:'Pinnacle',k:'pinnacle',ativo:true},
-  {id:18,nom:'Bwin',k:'bwin',ativo:true},
-  {id:19,nom:'Betfair',k:'betfair',ativo:true},
-  {id:20,nom:'Dafabet',k:'dafabet',ativo:true},
-  {id:21,nom:'1xBet',k:'1xbet',ativo:true},
-  {id:22,nom:'22Bet',k:'22bet',ativo:true},
-  {id:23,nom:'Betwinner',k:'betwinner',ativo:true},
-  {id:24,nom:'Parimatch',k:'parimatch',ativo:true},
-  {id:25,nom:'Melbet',k:'melbet',ativo:true},
-  {id:26,nom:'Marathonbet',k:'marathonbet',ativo:true},
-  {id:27,nom:'Unibet',k:'unibet',ativo:true},
-  {id:28,nom:'BetVictor',k:'betvictor',ativo:true},
-  {id:29,nom:'Betway BR',k:'betway_br',ativo:true},
-  {id:30,nom:'F12.Bet',k:'f12bet',ativo:true},
-  {id:31,nom:'Novibet',k:'novibet',ativo:true},
-  {id:32,nom:'Betsson',k:'betsson',ativo:true}
+  {id:1,nom:'888 Sport',k:'888sport',services:['sports_betting']},
+  {id:2,nom:'Bally Bet',k:'ballybet',services:['casino','sports_betting']},
+  {id:3,nom:'Bet365',k:'bet365',services:['casino','sports_betting']},
+  {id:4,nom:'Bet99',k:'bet99',services:['casino','sports_betting']},
+  {id:5,nom:'Betano',k:'betano',services:['casino','sports_betting']},
+  {id:6,nom:'BetMGM',k:'betmgm',services:['sports_betting']},
+  {id:7,nom:'BetNova',k:'betnova',services:['casino','sports_betting']},
+  {id:8,nom:'BetRivers',k:'betrivers',services:['casino','sports_betting']},
+  {id:9,nom:'BetVictor',k:'betvictor',services:['casino','sports_betting']},
+  {id:10,nom:'Betway',k:'betway',services:['casino','sports_betting']},
+  {id:11,nom:'Bwin',k:'bwin',services:['casino','poker','sports_betting']},
+  {id:12,nom:'Caesars',k:'caesars',services:['casino','sports_betting']},
+  {id:13,nom:'ComeOn',k:'comeon',services:['casino','sports_betting']},
+  {id:14,nom:'DraftKings',k:'draftkings',services:['sports_betting']},
+  {id:15,nom:'FanDuel',k:'fanduel',services:['sports_betting']},
+  {id:16,nom:'LeoVegas',k:'leovegas',services:['casino','sports_betting']},
+  {id:17,nom:'Neo.bet',k:'neobet',services:['casino','sports_betting']},
+  {id:18,nom:'NorthStar Bets',k:'northstarbets',services:['casino','sports_betting']},
+  {id:19,nom:'Partysports',k:'partysports',services:['sports_betting']},
+  {id:20,nom:'Pinnacle',k:'pinnacle',services:['casino','sports_betting']},
+  {id:21,nom:'Play Fallsview',k:'playfallsview',services:['casino','sports_betting']},
+  {id:22,nom:'PointsBet',k:'pointsbet',services:['casino','sports_betting']},
+  {id:23,nom:'PowerPlay',k:'powerplay',services:['casino','sports_betting']},
+  {id:24,nom:'PROLINE+',k:'proline',services:['sports_betting']},
+  {id:25,nom:'Rivalry',k:'rivalry',services:['casino','sports_betting']},
+  {id:26,nom:'Sports Interaction',k:'sports_interaction',services:['casino','sports_betting']},
+  {id:27,nom:'STX',k:'stx',services:['sports_betting','exchange']},
+  {id:28,nom:'Swiper',k:'swiper',services:['casino','sports_betting']},
+  {id:29,nom:'TheScore Bet',k:'thescore',services:['casino','sports_betting']},
+  {id:30,nom:'Titan Play',k:'titanplay',services:['casino','sports_betting']},
+  {id:31,nom:'TonyBet',k:'tonybet',services:['casino','sports_betting']},
+  {id:32,nom:'TooonieBet',k:'tooniebet',services:['casino','sports_betting']},
+  {id:33,nom:'Unibet',k:'unibet',services:['casino','sports_betting']}
 ];
 
 var SPORTS = [
-  'soccer_brazil_serie_b','soccer_conmebol_copa_libertadores','soccer_conmebol_copa_sudamericana',
-  'soccer_epl','soccer_spain_la_liga','soccer_italy_serie_a',
-  'soccer_germany_dfb_pokal','soccer_fifa_world_cup',
-  'soccer_uefa_champs_league','soccer_uefa_europa_league',
-  'soccer_argentina_primera_division','soccer_usa_mls',
-  'soccer_portugal_primeira_liga','soccer_netherlands_eredivisie',
-  'basketball_nba','tennis_atp_rankings','tennis_wta_rankings',
-  'americanfootball_nfl','icehockey_nhl','baseball_mlb'
+  'tennis_atp_french_open','tennis_wta_french_open',
+  'tennis_atp_wimbledon','tennis_wta_wimbledon',
+  'tennis_atp_us_open','tennis_wta_us_open',
+  'basketball_nba','basketball_nba_summer_league',
+  'baseball_mlb','mma_mixed_martial_arts',
+  'soccer_epl','soccer_france_ligue_one','soccer_germany_bundesliga',
+  'soccer_italy_serie_a','soccer_spain_la_liga',
+  'soccer_uefa_champs_league','soccer_usa_mls','soccer_canada_mls',
+  'soccer_fifa_world_cup','icehockey_nhl',
+  'americanfootball_nfl'
 ];
 var REGIONS = 'us,eu,uk,au,ca';
 
@@ -996,7 +999,7 @@ function localTime(iso) {
   try {
     var d = new Date(iso);
     if (isNaN(d.getTime())) return '--';
-    return d.toLocaleString('pt-BR', {dateStyle:'short', timeStyle:'short'});
+    return d.toLocaleString('en-CA', {dateStyle:'short', timeStyle:'short'});
   } catch(e) { return '--'; }
 }
 
@@ -1018,16 +1021,16 @@ async function doConnect() {
   C.bankroll = parseFloat(document.getElementById('sb2').value) || 1000;
   C.refreshSec = parseInt(document.getElementById('srf').value) || 90;
   var btn = document.getElementById('cbtn');
-  btn.disabled = true; btn.textContent = 'Verificando...';
+  btn.disabled = true; btn.textContent = 'Verifying...';
   var valid = false;
   try {
-    var r = await fetch('/api/odds/sports');
+    var r = await fetch('https://api.the-odds-api.com/v4/sports/?apiKey='+C.apiKey);
     valid = r.ok;
   } catch(e) { valid = false; }
   if (valid) { saveC(); launchApp(); }
   else {
-    showErr('Chave inválida ou rede inacessível.');
-    btn.disabled = false; btn.textContent = 'Conectar e Iniciar';
+    showErr('Invalid key or network unreachable.');
+    btn.disabled = false; btn.textContent = 'Connect and Launch';
   }
 }
 
@@ -1151,7 +1154,7 @@ function updSimBar() {
   elSet('sim-status', 'Using cached data only');
   if (S.lastRealFetch) {
     var d = new Date(S.lastRealFetch);
-    elSet('sim-ts', d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}));
+    elSet('sim-ts', d.toLocaleTimeString('en-CA', {hour:'2-digit', minute:'2-digit'}));
   } else {
     elSet('sim-ts', 'Never');
   }
@@ -1203,7 +1206,8 @@ async function doFetch(manual) {
 
     // Cache miss — make real HTTP call
     try {
-      var url = '/api/odds/sport/'+encodeURIComponent(sp)+'/?regions='+REGIONS+'&markets=h2h,totals,spreads&oddsFormat=decimal&dateFormat=iso';
+      var url = 'https://api.the-odds-api.com/v4/sports/'+sp+'/odds/?apiKey='+C.apiKey
+        +'&regions='+REGIONS+'&markets=h2h&oddsFormat=decimal&dateFormat=iso';
       var res = await fetch(url);
       if (!res.ok) continue;
       var data = await res.json();
@@ -1493,16 +1497,11 @@ function setScope(el) {
   redetect(); updScopeInfo();
 }
 function updScopeInfo() {
-  var txt = S.scope==='global' ? S.books+' casas globais' : S.scope==='fav' ? Object.keys(FAV).length+' favorita(s)' : 'Scanner automático';
-  elSet('scope-info', txt+' | '+Object.keys(ACTIVE_BM).filter(function(k){return ACTIVE_BM[k]!==false}).length+' ativas | '+S.games+' eventos');
+  var txt = S.scope==='global' ? S.books+' global bookmakers' : S.scope==='ontario' ? '33 Ontario bookmakers' : Object.keys(FAV).length+' favorite(s)';
+  elSet('scope-info', txt+' - '+S.games+' events');
 }
 
-function bmAllowed(key) {
-  if (S.scope === 'global') return true;
-  if (S.scope === 'fav') return isFavKey(key);
-  if (S.scope === 'auto') return true;
-  return true;
-}
+// RENDER SCAN - pure UI, zero API
 function setSport(el) {
   var pills=document.querySelectorAll('.spill');for(var i=0;i<pills.length;i++)pills[i].className='spill';
   el.className='spill on'; S.sport=el.getAttribute('data-s'); renderScan();
