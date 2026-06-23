@@ -186,6 +186,7 @@
     const bgColor = idx === 0 ? 'bg-blue-900/30 border-blue-700/50' :
                     idx === 1 ? 'bg-amber-900/30 border-amber-700/50' :
                     'bg-green-900/30 border-green-700/50';
+    const urlHtml = leg.url ? `<a href="${leg.url}" target="_blank" class="text-[10px] text-cyan-400 hover:underline truncate block mt-0.5">🔗 ${leg.bookmaker}</a>` : '';
     return `
       <div class="${bgColor} border rounded-lg p-2.5">
         <div class="flex items-center justify-between mb-1">
@@ -193,9 +194,10 @@
           <span class="text-xs text-zinc-400">@${leg.odds.toFixed(2)}</span>
         </div>
         <div class="flex items-center justify-between text-xs">
-          <a href="${leg.url || '#'}" target="_blank" rel="noopener" class="text-cyan-400 hover:text-cyan-300 underline truncate mr-1" title="${leg.bookmaker}">${leg.bookmaker}</a>
-          <span class="text-zinc-300 whitespace-nowrap">R$${leg.stake.toFixed(2)} → R$${leg.payout.toFixed(2)}</span>
+          <span class="text-zinc-400">${leg.bookmaker}</span>
+          <span>R$${leg.stake.toFixed(2)} → R$${leg.payout.toFixed(2)}</span>
         </div>
+        ${urlHtml}
       </div>
     `;
   }
